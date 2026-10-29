@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseRig — Live Telemetry & Bottleneck Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { dark: { 900: '#0b0f19', 800: '#111827', 700: '#1f2937' } } } } }
+    </script>
+</head>
+<body class="bg-dark-900 text-gray-100 font-sans min-h-screen p-6">
+
+    <!-- Top Header -->
+    <header class="flex justify-between items-center bg-dark-800 border border-gray-800 p-4 rounded-xl mb-6 shadow-lg">
+        <div>
+            <h1 class="text-xl font-bold tracking-wider text-cyan-400 flex items-center gap-2">
+                ⚡ PULSERIG <span class="text-xs bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded">v1.0 Live Engine</span>
+            </h1>
+            <p id="system-subtitle" class="text-xs text-gray-400 mt-1">Auditing Hardware...</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <span id="connection-badge" class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-300 border border-yellow-700 animate-pulse">CONNECTING...</span>
+        </div>
+    </header>
+
+    <!-- Simulation Control Bar -->
+    <div class="bg-dark-800 border border-gray-800 p-4 rounded-xl mb-6 flex flex-wrap items-center justify-between gap-4">
+        <span class="text-sm font-medium text-gray-300">🎮 Presentation Stress Simulator:</span>
+        <div class="flex gap-2">
+            <button onclick="setSimulation('live')" class="px-3 py-1.5 text-xs font-semibold rounded bg-gray-700 hover:bg-gray-600 transition">Live Hardware</button>
+            <button onclick="setSimulation('cpu_single_thread')" class="px-3 py-1.5 text-xs font-semibold rounded bg-amber-900 hover:bg-amber-800 text-amber-200 border border-amber-700 transition">Simulate CPU Starvation</button>
+            <button onclick="setSimulation('vram_overflow')" class="px-3 py-1.5 text-xs font-semibold rounded bg-red-900 hover:bg-red-800 text-red-200 border border-red-700 transition">Simulate VRAM Spillover</button>
+        </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left 2 Columns: Charts & Per-Thread Grid -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Real-Time Chart -->
+            <div class="bg-dark-800 border border-gray-800 p-5 rounded-xl shadow-lg">
+                <h2 class="text-sm font-semibold text-gray-400 mb-4 uppercase tracking-wider">Smoothed Telemetry Stream (EMA Filter)</h2>
+                <!-- Fixed inline height prevents layout flex-resizing collapse -->
+                <div class="relative" style="height: 280px;">
+                    <canvas id="telemetryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Per-Thread CPU Grid -->
+            <div class="bg-dark-800 border border-gray-800 p-5 rounded-xl shadow-lg">
+                <h2 class="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">Per-Core CPU Thread Load</h2>
+                <div id="thread-grid" class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                    <!-- Dynamic thread boxes injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Diagnosis & Recommendations -->
+        <div class="space-y-6">
+            <!-- Diagnosis Card -->
+            <div id="diagnosis-card" class="bg-dark-800 border border-gray-800 p-5 rounded-xl shadow-lg border-l-4 border-l-cyan-500">
+                <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Live Bottleneck State</h2>
+                <div id="status-title" class="text-lg font-extrabold text-cyan-400 mb-2">Analyzing Workload...</div>
+                <p id="status-explanation" class="text-xs text-gray-300 leading-relaxed mb-4">Initializing metrics buffer...</p>
+
+                <div class="border-t border-gray-700 pt-3 mt-3">
+                    <h3 class="text-xs font-semibold text-yellow-400 mb-2 uppercase tracking-wider">🔧 Zero-Cost Optimizations</h3>
+                    <ul id="fixes-list" class="text-xs space-y-1.5 text-gray-300 list-disc list-inside">
+                        <li>Waiting for sensor telemetry...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SQLite Hardware Upgrade Card -->
+            <div class="bg-dark-800 border border-gray-800 p-5 rounded-xl shadow-lg">
+                <h3 class="text-xs font-semibold text-emerald-400 mb-3 uppercase tracking-wider">💡 SQLite Drop-In Upgrades</h3>
+                <div id="upgrades-container" class="space-y-3">
+                    <p class="text-xs text-gray-400 italic">No hardware upgrades required for current workload.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External JavaScript File -->
+    <script src="app.js"></script>
+</body>
+</html>
