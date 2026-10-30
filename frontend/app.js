@@ -1,4 +1,4 @@
-// Initialize Chart.js with optimized zero-animation streaming config & performance flags
+// Initialize Chart.js with optimized continuous streaming animation
 const ctx = document.getElementById('telemetryChart').getContext('2d');
 const chart = new Chart(ctx, {
     type: 'line',
@@ -28,7 +28,10 @@ const chart = new Chart(ctx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        animation: false, // Disables tween animations so canvas paints instantly at full refresh rate
+        animation: {
+            duration: 200,      // Slightly longer than the 150ms polling rate
+            easing: 'linear'    // Creates a continuous, buttery-smooth glide
+        },
         parsing: false,   // Bypasses internal object parsing for maximum rendering speed
         normalized: true, // Optimizes memory handling for continuous array shifts
         scales: {
@@ -67,12 +70,12 @@ ws.onmessage = (event) => {
     document.getElementById('system-subtitle').textContent = 
         `${data.specs.cpu_model} | ${data.specs.gpu_model} | RAM: ${data.specs.ram_total_gb}GB (${data.specs.ram_channel_mode}, ${data.specs.ram_speed_mhz}MHz)`;
 
-    // 1. Instant Chart Render (Zero lag)
+    // 1. Smooth Chart Render (60Hz+ Glide)
     chart.data.datasets[0].data.shift();
     chart.data.datasets[0].data.push(data.telemetry.smoothed.cpu_max_thread);
     chart.data.datasets[1].data.shift();
     chart.data.datasets[1].data.push(data.telemetry.smoothed.gpu_load);
-    chart.update('none');
+    chart.update(); // <-- Updates smoothly without the 'none' restriction
 
     // 2. Throttle DOM Grid & Card updates to every 200ms to keep main thread free for the chart
     if (now - lastGridUpdate > 200) {
