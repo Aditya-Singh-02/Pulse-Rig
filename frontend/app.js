@@ -32,8 +32,7 @@ const chart = new Chart(ctx, {
             duration: 200,      // Slightly longer than the 150ms polling rate
             easing: 'linear'    // Creates a continuous, buttery-smooth glide
         },
-        parsing: false,   // Bypasses internal object parsing for maximum rendering speed
-        normalized: true, // Optimizes memory handling for continuous array shifts
+        parsing: true,
         scales: {
             y: { min: 0, max: 100, grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } },
             x: { grid: { display: false }, ticks: { display: false } }
