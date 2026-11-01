@@ -1,4 +1,4 @@
-# ⚡ PulseRig
+#  PulseRig
 
 **Live Hardware Telemetry & Bottleneck Analyzer**
 
